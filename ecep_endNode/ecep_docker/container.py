@@ -35,13 +35,16 @@ def create_containers(args):
 	if 'network_disabled' in args:
 		args['network_disabled'] = bool(args['network_disabled'])
 	
-	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.12')		
+	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.18')		
 	try:
 		containerID = invoke_clientAPI.create_container(**args)
-		return containerID
 	except HTTPError:
  		for line in invoke_clientAPI.pull(args['image'], stream=True):
      			print(json.dumps(json.loads(line), indent=4))	
+     			
+     		containerID = invoke_clientAPI.create_container(**args)
+     		
+     	return containerID
 
 def list_containers(args):
 	"""
