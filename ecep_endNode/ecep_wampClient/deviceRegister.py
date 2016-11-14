@@ -44,6 +44,7 @@ class periodicTransmit(object):
         self._topic = None
         self._heartbeatData = {}
         self._containerData = {}
+	self._cpuInfo = {}
     
     #device registration and heartbeat
     @threaded
@@ -54,9 +55,6 @@ class periodicTransmit(object):
             self._heartbeatData['location'] = cpu_info.getDeviceLocation()
             self._heartbeatData['arch'] = cpu_info.getMachineArchitecture()
             sendTo(self._topic, self._heartbeatData)
-            
-            print("topic: " +self._topic+ ", data: ")
-            print(self._heartbeatData)
             time.sleep(ticks)
             
     #Send container status
@@ -67,10 +65,6 @@ class periodicTransmit(object):
             self._containerData['deviceId'] = self._deviceId
             self._containerData['contList'] = cca.getContainerList()
             sendTo(self._topic, self._containerData)
-            
-            print ('number of containers = ',  len(self._containerData['contList']))
-            print("topic: " +self._topic+ ", data: " )
-            print(self._containerData)
             time.sleep(ticks*10) # 50 seconds
             
             
@@ -80,10 +74,8 @@ class periodicTransmit(object):
         while True:
             self._topic = "com.ecep.cpuInfo"
             self._cpuInfo['deviceId'] = self._deviceId
-            self._cpuInfo = cpu_info.getCpuInfo()
+            self._cpuInfo['info'] = cpu_info.getCpuInfo()
             sendTo(self._topic, self._cpuInfo)
-            
-            print(self._cpuInfo)
             time.sleep(ticks*10) # 50 seconds
             
             
@@ -105,8 +97,9 @@ if __name__ == "__main__":
     # params for wampserver
     ip = sys.argv[1]
     port = sys.argv[2]
-    realm = sys.argv[3]
+    realm = u'realm1'
     
+    print(ip, port, realm)
     client = wampserver(device)
     check = client.connect(ip, port, realm)
     
