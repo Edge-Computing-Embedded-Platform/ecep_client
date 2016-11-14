@@ -106,10 +106,6 @@ if __name__ == "__main__":
     ip = sys.argv[1]
     port = sys.argv[2]
     realm = sys.argv[3]
-
-    print(ip, port, realm)
-    while True:
-        time.sleep(5)
     
     client = wampserver(device)
     check = client.connect(ip, port, realm)
