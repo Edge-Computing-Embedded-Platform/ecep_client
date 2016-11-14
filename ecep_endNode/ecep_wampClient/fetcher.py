@@ -5,7 +5,7 @@ import os
 ip = "localhost"#"ec2-52-32-10-8.us-west-2.compute.amazonaws.com"
 port = 8070
 route = '/download'
-file_root_path = '/home/ubuntu/'
+file_root_path = '/home/debian/'
 
 def get_file(**kwargs):
     key = ['username', 'containerName', 'filename']
@@ -22,10 +22,10 @@ def get_file(**kwargs):
     try:
         req = urllib2.Request(url, data, headers)
         response = urllib2.urlopen(req)
-        file_path = file_root_path + kwargs['containerName']+'/' +kwargs['filename']
+        file_path = file_root_path + kwargs['username']+'_'+kwargs['conatinerName']+'/' +kwargs['filename']
 
-        if not os.path.exists(file_root_path+kwargs['containerName']):
-            os.makedirs(file_root_path+kwargs['containerName'])
+        if not os.path.exists(file_root_path + kwargs['username']+'_'+kwargs['conatinerName']):
+            os.makedirs(file_root_path + kwargs['username']+'_'+kwargs['conatinerName'])
 
         print(file_path)
         with open(file_path, 'wb') as output:
@@ -34,7 +34,9 @@ def get_file(**kwargs):
                 if not chunk:
                     break
                 output.write(chunk)
+                print "downloading"
                 output.flush()
+        return file_path
     except Exception, e:
             print(e)
 
