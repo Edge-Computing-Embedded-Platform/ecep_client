@@ -8,9 +8,8 @@ container API.
 """
 
 from ..ecep_docker import container, addFile_toContainer
-from deviceRegister import sendResponse
 from fetcher import *
-
+from wamp_client import *
 # Call appropriate functions according to the commands received from user
 def callContainer(data):
     """

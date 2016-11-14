@@ -79,7 +79,7 @@ class periodicTransmit(object):
             time.sleep(ticks*10) # 50 seconds
             
 def handleCont(args):
-    sendResponse(callContainer(args))
+    sendResponse(cca.callContainer(args))
           
             
 def sendResponse(response):
@@ -89,6 +89,8 @@ def sendResponse(response):
     """
     topic = "com.ecep.deviceResponse"
     data = response
+    print data
+    print topic
     sendTo(topic, data)
             
             
