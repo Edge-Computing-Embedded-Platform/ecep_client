@@ -20,19 +20,18 @@ class peripherelAcess:
 		- Response 	
 		"""
 		host_config = {}
-		#name = kwargs['name']
-		#host_ports = kwargs['ports']
-		#host_config = kwargs['host_config']
-		image = kwargs['image']
-		network_disabled = kwargs['network_disabled']
-		#host_config_ports = kwargs['host_config']['port_binding']
-		#host_config_devices = kwargs['host_config']['devices']
-		host_config = {'devices': '/sys/class/leds:/:rwm'}
+		#image = kwargs['image']
+		#network_disabled = kwargs['network_disabled']
+		#host_config = {'devices': '/sys/class/leds:/:rwm'}
 		
-		print image,host_config
+		#print image,host_config
 		invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.18')		
 
-		containerID = invoke_clientAPI.create_container(image)
+		containerID = invoke_clientAPI.create_container(
+		    'ubuntu', 'true', stdin_open=bool('True'), command = list['/bin/bash'], 
+		     host_config=invoke_clientAPI.create_host_config(devices=['/dev/sda:/dev/xvda:rwm']))
+		
+		#containerID = invoke_clientAPI.create_container(image)
      		return containerID
 
 

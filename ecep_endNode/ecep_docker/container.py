@@ -15,10 +15,10 @@ def create_containers(args):
 	- API is equivalent to docker run command. 
 	
 	- Response if image is found locally:
-	  {u'Id': u'67d1f4f5fb5e667f03e55e3b794fe34b95304d0cec584459ca0f84fa3c0681e1', 
-       u'Warnings': None}
-	- If image is not found locally, then it is pulled from docker hub and the response 
-       is a json string.
+	  {u'Id': u'67d1f4f5fb5e667f03e55e3b794fe34b95304d0cec584459ca0f84fa3c0681e1', u'Warnings': None}
+	- If image is not found locally, then it is pulled from docker hub and the response is a json string.
+	
+	- returns container ID if sucessful or None if unsuccessful
 	"""
 	
 	print ("In create container")
@@ -35,16 +35,21 @@ def create_containers(args):
 	if 'network_disabled' in args:
 		args['network_disabled'] = bool(args['network_disabled'])
 	
-	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.18')		
+	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.12')		
+	
 	try:
 		containerID = invoke_clientAPI.create_container(**args)
-	except HTTPError:
- 		for line in invoke_clientAPI.pull(args['image'], stream=True):
-     			print(json.dumps(json.loads(line), indent=4))	
-     			
-     		containerID = invoke_clientAPI.create_container(**args)
-     		
+	except Exception as e:
+		try:
+     			#for line in invoke_clientAPI.pull(args['image'], stream=True):
+     			#	print(json.dumps(json.loads(line), indent=4))
+     			invoke_clientAPI.pull(args['image'],stream=True)
+     			containerID = invoke_clientAPI.create_container(**args)
+   		except HTTPError:
+   			containerID = None
+   			
      	return containerID
+
 
 def list_containers(args):
 	"""
@@ -90,10 +95,10 @@ def run_container(args):
 	status = {}
 	try:
 		start_container = invoke_clientAPI.start(**container_ID)
-		status["status"] = "Success"
+		status["status"] = "True"
 		return json.dumps(status)
 	except:
-		status["status"] = "Failed"
+		status["status"] = "False"
 		return json.dumps(status)
 		
 
@@ -119,10 +124,10 @@ def delete_container(args):
 	status = {}
 	try:
 		container_removed = invoke_clientAPI.remove_container(**args)
-		status["status"] = "Success"
+		status["status"] = "True"
 		return json.dumps(status)
 	except:
-		status["status"] = "Failed"
+		status["status"] = "False"
 		return json.dumps(status)
 	return container_removed
 
@@ -147,10 +152,10 @@ def delete_image(args):
 	status = {}
 	try:
 		image_removed = invoke_clientAPI.remove_image(**args)
-		status["status"] = "Success"
+		status["status"] = "True"
 		return json.dumps(status)
 	except:
-		status["status"] = "Failed"
+		status["status"] = "False"
 		return json.dumps(status)
 
 def stop_container(args):
@@ -171,10 +176,10 @@ def stop_container(args):
 	status = {}
 	try:
 		halt_container = invoke_clientAPI.stop(**args)
-		status["status"] = "Success"
+		status["status"] = "True"
 		return json.dumps(status)
 	except:
-		status["status"] = "Failed"
+		status["status"] = "False"
 		return json.dumps(status)
 
 
@@ -196,10 +201,10 @@ def rename_container(args):
 	status = {}
 	try:
 		newname_container = invoke_clientAPI.rename(**args)
-		status["status"] = "Success"
+		status["status"] = "True"
 		return json.dumps(status)
 	except:
-		status["status"] = "Failed"
+		status["status"] = "False"
 		return json.dumps(status)
 
 

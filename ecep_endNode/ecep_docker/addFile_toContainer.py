@@ -18,15 +18,18 @@ invoke_cli = Client(base_url='unix://var/run/docker.sock')
 class addFile:
 	def startContainer_toAddFile(self, **kwargs):
 		containerID = kwargs['container_name']
-	        response = invoke_cli.start(containerID)
-	        return response
+	        status = {}
+		
+		try:
+			response = invoke_cli.start(containerID)
+			status["status"] = "True"
+		except:
+			status["status"] = "False"
+		
+		return json.dumps(status)
+			
 
 	def copyFileTo_container(self, **kwargs):
-		#print kwargs
-		#if kwargs is not None:
-		#	for key, value in kwargs .iteritems():
-		#		print "%s == %s" %(key,value)
-			
 		containerID = kwargs['container_name']	
 		path = kwargs['containerpath']
 		data = kwargs['file']
@@ -48,22 +51,17 @@ class addFile:
 		pw_tar.close()
 		pw_tarstream.seek(0)
 		
-		#print containerID, path, data
         	response = invoke_cli.put_archive(containerID,path,pw_tarstream)
         	return response
         	
-        def run_shellScript(self, **kwargs):
-        	print kwargs
-        	if kwargs is not None:
-			for key, value in kwargs .iteritems():
-				print "%s == %s" %(key,value)
-		print kwargs
+        def run_shellScript(self, **kwargs):		
 		containerID = kwargs['container_name']	
 		#stdout = kwargs['stdout']
-		user = kwargs['user']
-		cmmd = ['sh','/hello.sh']
+		#user = kwargs['user']
+		exe_file = filetype
+		cmmd = ['sh','/exe_file']
 		print containerID,user
-		response = invoke_cli.exec_create(container='nostalgic_bhabha',cmd=cmmd,user='root')
+		response = invoke_cli.exec_create(container=containerID,cmd=cmmd,user='root')
 		print response1
 		ID = response1
 		response = invoke_cli.exec_start(exec_id = ID)
