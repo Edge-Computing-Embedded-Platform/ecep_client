@@ -97,7 +97,7 @@ if __name__ == "__main__":
     # params for wampserver
     ip = sys.argv[1]
     port = sys.argv[2]
-    realm = u'realm1'
+    realm = unicode(sys.argv[3])
     
     print(ip, port, realm)
     client = wampserver(device)
