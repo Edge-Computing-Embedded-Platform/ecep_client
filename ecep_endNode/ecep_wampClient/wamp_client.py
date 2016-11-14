@@ -60,24 +60,6 @@ class ClientReader(ApplicationSession):
         except Exception as e:
             print("could not subscribe to topic:" + self.topic + " : " + e)
 
-        
-        # This is to handle the cpu info request
-        self.topic = self.config.extra['cpuInfo']
-        def cpuInfo(args):
-            """
-            return a dictionary format of cpu information
-            """
-            # DEBUG Message
-            log.msg('I receives', args)
-            # handle the commands
-            return getCpuInfo()
-
-        try:
-            yield self.subscribe(cpuInfo, self.topic)
-            print ("Subscribed to topic: " + self.topic)
-        except Exception as e:
-            print("could not subscribe to topic:" + self.topic + " : " + e)
-
 
 class wampserver(ApplicationSession):
     def __init__(self, device):
@@ -92,8 +74,7 @@ class wampserver(ApplicationSession):
         self._realm = None
         self._url = None
 
-        self._extra = {'cmd': 'com.ecep.'+device+'.cmd', 
-                       'cpuInfo': 'com.ecep.'+device+'.cpuInfo'}
+        self._extra = {'cmd': 'com.ecep.'+device+'.cmd'}
 
     def connect(self, ip, port, realm):
         self._realm = realm

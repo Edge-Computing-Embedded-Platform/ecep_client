@@ -74,6 +74,16 @@ class periodicTransmit(object):
             time.sleep(ticks*10)
             
             
+    #Send CPU information
+    @threaded
+    def cpuInfo(self):
+        while True:
+            self._topic = "com.ecep.cpuInfo"
+            self._cpuInfo['deviceId'] = self._deviceId
+            self._cpuInfo = cpu_info.getCpuInfo()
+            
+            
+            
 def sendResponse(response):
     """
     This sends out the response from the execution of

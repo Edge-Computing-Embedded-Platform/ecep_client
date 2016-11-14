@@ -58,30 +58,32 @@ def getCpuInfo():
         info = invoke_clientAPI.info()
         
         key = ('Containers', 'Images', 'KernelVersion', 'OperatingSystem', 'NCPU', 'Name')
-        ret = OrderedDict((value, info[value]) for value in key)
+        ret = dict((value, info[value]) for value in key)
         
-        ret['No. of Containers'] = ret.pop('Containers')
-        ret['No. of Images'] = ret.pop('Images')
-        ret['Kernel Version'] = ret.pop('KernelVersion')
-        ret['Operating System'] = ret.pop('OperatingSystem')
-        ret['No. of CPUs'] = ret.pop('NCPU')
+        ret['deviceName'] = ret.pop('Name')
+        ret['totalContainers'] = ret.pop('Containers')
+        ret['totalImages'] = ret.pop('Images')
+        ret['kernelVersion'] = ret.pop('KernelVersion')
+        ret['os'] = ret.pop('OperatingSystem')
+        ret['CPUs'] = ret.pop('NCPU')
+        
         
         # CPU percentage
-        ret['CPU percentage (%)'] = psutil.cpu_percent(interval = 2.0)
+        ret['CPUUsage'] = psutil.cpu_percent(interval = 2.0)
         
         # Get the RAM info
         mem = psutil.virtual_memory()
-        ret['Total Memory (Mb)'] = convertToMB(mem.total)
-        ret['Used Memory (Mb)'] = convertToMB(mem.used)
-        ret['Percentage of Memory Usage (%)'] = mem.percent
-        ret['Available Memory (Mb)'] = convertToMB(mem.available)
+        ret['physicalMem'] = convertToMB(mem.total)
+        ret['physicalUsed'] = convertToMB(mem.used)
+        ret['physicalPercent'] = mem.percent
+        ret['physicalUnused'] = convertToMB(mem.available)
         
         # Get the Disk memory info
         mem = psutil.disk_usage('/')
-        ret['Total Disk Memory (Gb)'] = converToGB(mem.total)
-        ret['Used disk Memory (Gb)'] = converToGB(mem.used)
-        ret['Percentage of Disk Memory Usage (%)'] = mem.percent
-        ret['Available Disk Memory (Gb)'] = converToGB(mem.free)
+        ret['diskMem'] = converToGB(mem.total)
+        ret['diskUsed'] = converToGB(mem.used)
+        ret['diskPercent'] = mem.percent
+        ret['diskUnused'] = converToGB(mem.free)
         
     except Exception as e:
         ret = None	
