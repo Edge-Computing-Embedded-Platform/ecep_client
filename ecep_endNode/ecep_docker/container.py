@@ -39,15 +39,28 @@ def create_containers(args):
 	
 	try:
 		containerID = invoke_clientAPI.create_container(**args)
+		print ('IN FIRST TRY CALL')
 	except Exception as e:
+		print ('IN FIRST Exception')
 		try:
-     			#for line in invoke_clientAPI.pull(args['image'], stream=True):
-     			#	print(json.dumps(json.loads(line), indent=4))
-     			invoke_clientAPI.pull(args['image'],stream=True)
+     			for line in invoke_clientAPI.pull(args['image'], stream=True):
+     				print(json.dumps(json.loads(line), indent=4))
+     			#invoke_clientAPI.pull(args['image'],stream=True)
+     			
      			containerID = invoke_clientAPI.create_container(**args)
    		except HTTPError:
    			containerID = None
    			
+	"""
+		for line in invoke_clientAPI.pull(args['image'], stream=True):
+     			print(json.dumps(json.loads(line), indent=4))
+     	
+     	
+     	#containerID = invoke_clientAPI.create_container(**args)
+     	#print ('CONTAINERID: ',containerID)
+	"""
+		
+   	
      	return containerID
 
 
