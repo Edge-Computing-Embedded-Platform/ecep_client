@@ -78,7 +78,9 @@ class periodicTransmit(object):
             sendTo(self._topic, self._cpuInfo)
             time.sleep(ticks*10) # 50 seconds
             
-            
+def handleCont(args):
+    sendResponse(callContainer(args))
+          
             
 def sendResponse(response):
     """

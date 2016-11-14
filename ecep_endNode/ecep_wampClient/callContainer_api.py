@@ -75,7 +75,7 @@ def callContainer(data):
         else:
             response['status'] = 'stop failed'
             
-    sendResponse(response)
+    return response
     
     
 def getContainerList():
