@@ -24,7 +24,7 @@ import threading
 import time
 import sys
 
-from callContainer_api import callContainer
+from deviceRegister import handleCont
 
 
 log.startLogging(sys.stdout)
@@ -52,7 +52,7 @@ class ClientReader(ApplicationSession):
             # DEBUG Message
             log.msg('I receives', args)
             # handle the commands
-            callContainer(args)
+            handleCont(args)
 
         try:
             yield self.subscribe(contcmd, self.topic)
