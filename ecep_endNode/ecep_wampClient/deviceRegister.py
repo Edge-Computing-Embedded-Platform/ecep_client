@@ -16,7 +16,7 @@ import callContainer_api as cca
 
 from ..ecep_docker import cpu_info
 
-ticks = 5
+ticks = 5 #seconds
 
 # decorator for threads
 def threaded(func):
@@ -71,7 +71,7 @@ class periodicTransmit(object):
             print ('number of containers = ',  len(self._containerData['contList']))
             print("topic: " +self._topic+ ", data: " )
             print(self._containerData)
-            time.sleep(ticks*10)
+            time.sleep(ticks*10) # 50 seconds
             
             
     #Send CPU information
@@ -81,6 +81,10 @@ class periodicTransmit(object):
             self._topic = "com.ecep.cpuInfo"
             self._cpuInfo['deviceId'] = self._deviceId
             self._cpuInfo = cpu_info.getCpuInfo()
+            sendTo(self._topic, self._cpuInfo)
+            
+            print(self._cpuInfo)
+            time.sleep(ticks*10) # 50 seconds
             
             
             
@@ -119,9 +123,11 @@ if __name__ == "__main__":
     # Launch thread
     handle_heartbeat = periodicTransmit_I.heartbeat()
     handle_containerStatus = periodicTransmit_I.containerStatus()
+    handle_cpuInfo = periodicTransmit_I.cpuInfo()
     
     while True:
         time.sleep(2)
         
     handle_heartbeat.join()
     handle_containerStatus.join()
+    handle_cpuInfo.join()
