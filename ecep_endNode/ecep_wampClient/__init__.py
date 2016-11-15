@@ -4,7 +4,7 @@ Developed by Abhishek Gurudutt, Chinmayi Divakara
 Praveen Prabhakaran, Tejeshwar Chandra Kamaal
 """
 
-import wamp_client
+from wamp_client import *
 import callContainer_api
 import deviceRegister
 import fetcher

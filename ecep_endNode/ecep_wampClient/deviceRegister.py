@@ -18,6 +18,13 @@ from ..ecep_docker import cpu_info
 
 ticks = 5 #seconds
 
+client = None
+
+def init(device):
+    global client
+    client = wampserver(device)
+
+
 # decorator for threads
 def threaded(func):
     """
@@ -44,7 +51,7 @@ class periodicTransmit(object):
         self._topic = None
         self._heartbeatData = {}
         self._containerData = {}
-	self._cpuInfo = {}
+        self._cpuInfo = {}
     
     #device registration and heartbeat
     @threaded
@@ -54,7 +61,7 @@ class periodicTransmit(object):
             self._heartbeatData['deviceId'] = self._deviceId
             self._heartbeatData['location'] = cpu_info.getDeviceLocation()
             self._heartbeatData['arch'] = cpu_info.getMachineArchitecture()
-            sendTo(self._topic, self._heartbeatData)
+            client.sendTo(self._topic, self._heartbeatData)
             time.sleep(ticks)
             
     #Send container status
@@ -64,7 +71,7 @@ class periodicTransmit(object):
             self._topic = "com.ecep.containerStatus"
             self._containerData['deviceId'] = self._deviceId
             self._containerData['contList'] = cca.getContainerList()
-            sendTo(self._topic, self._containerData)
+            client.sendTo(self._topic, self._containerData)
             time.sleep(ticks*10) # 50 seconds
             
             
@@ -75,7 +82,7 @@ class periodicTransmit(object):
             self._topic = "com.ecep.cpuInfo"
             self._cpuInfo['deviceId'] = self._deviceId
             self._cpuInfo['info'] = cpu_info.getCpuInfo()
-            sendTo(self._topic, self._cpuInfo)
+            client.sendTo(self._topic, self._cpuInfo)
             time.sleep(ticks*10) # 50 seconds
             
 def handleCont(args):
@@ -91,12 +98,14 @@ def sendResponse(response):
     data = response
     print data
     print topic
-    sendTo(topic, data)
+    client.sendTo(topic, data)
             
             
 if __name__ == "__main__":
-     
-    device = 'beaglebone'
+         
+    global client
+    device = 'falcon'
+    init(device)
     
     # params for wampserver
     ip = sys.argv[1]
@@ -104,7 +113,6 @@ if __name__ == "__main__":
     realm = unicode(sys.argv[3])
     
     print(ip, port, realm)
-    client = wampserver(device)
     check = client.connect(ip, port, realm)
     
     #wait till the connection is established
@@ -117,6 +125,9 @@ if __name__ == "__main__":
     handle_heartbeat = periodicTransmit_I.heartbeat()
     handle_containerStatus = periodicTransmit_I.containerStatus()
     handle_cpuInfo = periodicTransmit_I.cpuInfo()
+    
+    res = {'': ''}
+    sendResponse(res)
     
     while True:
         time.sleep(2)

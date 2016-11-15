@@ -5,7 +5,7 @@ import os
 ip = "localhost"#"ec2-52-32-10-8.us-west-2.compute.amazonaws.com"
 port = 8070
 route = '/download'
-file_root_path = '/home/debian/'
+file_root_path = '/home/abhi/'
 
 def get_file(**kwargs):
     key = ['username', 'containerName', 'filename']

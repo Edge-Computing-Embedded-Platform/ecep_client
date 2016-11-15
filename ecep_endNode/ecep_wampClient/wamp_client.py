@@ -115,12 +115,12 @@ class wampserver(ApplicationSession):
         return self
 
 
-# Function used to publish the data 
-def sendTo(topic, data):
-    print ("publishing to :" + topic + " and sending data: ")
-    print (data)
-    global requestReceived
-    requestReceived.publish(topic, data)
+    # Function used to publish the data 
+    def sendTo(self, topic, data):
+        print ("publishing to :" + topic + " and sending data: ")
+        print (data)
+        global requestReceived
+        requestReceived.publish(topic, data)
 
 
 if __name__ == '__main__':
