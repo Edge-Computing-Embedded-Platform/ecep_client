@@ -16,10 +16,10 @@ import callContainer_api as cca
 
 from ..ecep_docker import cpu_info
 
-ticks = 5 #seconds
+ticks = 20 #seconds
 
 client = None
-
+    
 def init(device):
     global client
     client = wampserver(device)
@@ -61,7 +61,7 @@ class periodicTransmit(object):
             self._heartbeatData['deviceId'] = self._deviceId
             self._heartbeatData['location'] = cpu_info.getDeviceLocation()
             self._heartbeatData['arch'] = cpu_info.getMachineArchitecture()
-            client.sendTo(self._topic, self._heartbeatData)
+            sendTo(self._topic, self._heartbeatData)
             time.sleep(ticks)
             
     #Send container status
@@ -71,8 +71,8 @@ class periodicTransmit(object):
             self._topic = "com.ecep.containerStatus"
             self._containerData['deviceId'] = self._deviceId
             self._containerData['contList'] = cca.getContainerList()
-            client.sendTo(self._topic, self._containerData)
-            time.sleep(ticks*10) # 50 seconds
+            sendTo(self._topic, self._containerData)
+            time.sleep(ticks*5) #  100 seconds
             
             
     #Send CPU information
@@ -82,28 +82,14 @@ class periodicTransmit(object):
             self._topic = "com.ecep.cpuInfo"
             self._cpuInfo['deviceId'] = self._deviceId
             self._cpuInfo['info'] = cpu_info.getCpuInfo()
-            client.sendTo(self._topic, self._cpuInfo)
-            time.sleep(ticks*10) # 50 seconds
-            
-def handleCont(args):
-    sendResponse(cca.callContainer(args))
-          
-            
-def sendResponse(response):
-    """
-    This sends out the response from the execution of
-    container commands to the server.
-    """
-    topic = "com.ecep.deviceResponse"
-    data = response
-    print data
-    print topic
-    client.sendTo(topic, data)
-            
+            sendTo(self._topic, self._cpuInfo)
+            time.sleep(ticks*50) # 1000 seconds
+                     
             
 if __name__ == "__main__":
          
     global client
+    
     device = 'falcon'
     init(device)
     
@@ -115,8 +101,9 @@ if __name__ == "__main__":
     print(ip, port, realm)
     check = client.connect(ip, port, realm)
     
+    
     #wait till the connection is established
-    time.sleep(10)
+    time.sleep(5)
     
     #create an instance
     periodicTransmit_I = periodicTransmit(device)
@@ -125,9 +112,6 @@ if __name__ == "__main__":
     handle_heartbeat = periodicTransmit_I.heartbeat()
     handle_containerStatus = periodicTransmit_I.containerStatus()
     handle_cpuInfo = periodicTransmit_I.cpuInfo()
-    
-    res = {'': ''}
-    sendResponse(res)
     
     while True:
         time.sleep(2)

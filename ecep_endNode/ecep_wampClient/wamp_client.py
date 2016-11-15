@@ -24,8 +24,7 @@ import threading
 import time
 import sys
 
-from deviceRegister import handleCont
-
+from callContainer_api import callContainer
 
 log.startLogging(sys.stdout)
 requestReceived = None
@@ -50,9 +49,12 @@ class ClientReader(ApplicationSession):
         self.topic = self.config.extra['cmd']
         def contcmd(args):
             # DEBUG Message
-            log.msg('I receives', args)
+            print('*******************************************************************')
+            log.msg('received', args)
+            print('*******************************************************************')
             # handle the commands
-            handleCont(args)
+            resp = callContainer(args)
+            sendTo("com.ecep.deviceResponse", resp)
 
         try:
             yield self.subscribe(contcmd, self.topic)
@@ -115,12 +117,12 @@ class wampserver(ApplicationSession):
         return self
 
 
-    # Function used to publish the data 
-    def sendTo(self, topic, data):
-        print ("publishing to :" + topic + " and sending data: ")
-        print (data)
-        global requestReceived
-        requestReceived.publish(topic, data)
+# Function used to publish the data 
+def sendTo(topic, data):
+    print ("publishing to :" + topic + " and sending data: ")
+    print (data)
+    global requestReceived
+    requestReceived.publish(topic, data)
 
 
 if __name__ == '__main__':
