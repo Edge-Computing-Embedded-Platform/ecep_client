@@ -80,8 +80,7 @@ class periodicTransmit(object):
     def cpuInfo(self):
         while True:
             self._topic = "com.ecep.cpuInfo"
-            self._cpuInfo['deviceId'] = self._deviceId
-            self._cpuInfo['info'] = cpu_info.getCpuInfo()
+            self._cpuInfo = cpu_info.getCpuInfo()
             sendTo(self._topic, self._cpuInfo)
             time.sleep(ticks*50) # 1000 seconds
                      

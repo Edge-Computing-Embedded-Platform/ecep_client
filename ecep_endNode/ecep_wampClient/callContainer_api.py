@@ -90,7 +90,6 @@ def getContainerList():
         containerInfo['status'] = entries['State']
         containerInfo['info'] = entries['Status']
         containerInfo['containerName'] = entries['Names']
-        containerInfo['ID'] = entries['Id']
         
         contList.append(containerInfo.copy())
         
