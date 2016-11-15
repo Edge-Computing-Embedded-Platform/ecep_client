@@ -51,6 +51,16 @@ def callContainer(data):
         cmd['container'] = data['containerName']
         response['success'] = container.run_container(cmd)
         
+        if response['success']:
+            response['status'] = 'started'
+        else:
+            response['status'] = 'start failed'
+            
+    # to upload a file and start
+    if data['command'] == 'upStart':
+        cmd['container'] = data['containerName']
+        response['success'] = container.run_container(cmd)
+        
         kwargs = {'username' : data['containerName'].split('_')[0], 'containerName' :
             data['containerName'].split('_')[1], 'filename' : data['filename']}
         cmd['local_path'] = fetcher.get_file(**kwargs)
@@ -59,9 +69,9 @@ def callContainer(data):
         response['success'] = execFile.copyFileTo_container(cmd)
         
         if response['success']:
-            response['status'] = 'started'
+            response['status'] = 'file uploaded and started'
         else:
-            response['status'] = 'start failed'
+            response['status'] = 'file upload and start failed'
         
 
     # To stop a container
