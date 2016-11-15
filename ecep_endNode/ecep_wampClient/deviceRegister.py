@@ -69,8 +69,7 @@ class periodicTransmit(object):
     def containerStatus(self):
         while True:
             self._topic = "com.ecep.containerStatus"
-            self._containerData['deviceId'] = self._deviceId
-            self._containerData['contList'] = cca.getContainerList()
+            self._containerData = cca.getContainerList()
             sendTo(self._topic, self._containerData)
             time.sleep(ticks*5) #  100 seconds
             
@@ -80,10 +79,11 @@ class periodicTransmit(object):
     def cpuInfo(self):
         while True:
             self._topic = "com.ecep.cpuInfo"
-            self._cpuInfo = cpu_info.getCpuInfo()
+            self._cpuInfo['deviceId'] = self._deviceId
+            self._cpuInfo['info'] = cpu_info.getCpuInfo()
             sendTo(self._topic, self._cpuInfo)
             time.sleep(ticks*50) # 1000 seconds
-                     
+            
             
 if __name__ == "__main__":
          
