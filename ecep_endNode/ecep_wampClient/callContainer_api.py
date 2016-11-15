@@ -87,8 +87,7 @@ def getContainerList():
     contListRaw = container.list_containers(args)
     
     for entries in contListRaw:
-        containerInfo['status'] = entries['State']
-        containerInfo['info'] = entries['Status']
+        containerInfo['status'] = entries['Status']
         containerInfo['containerName'] = entries['Names']
         
         contList.append(containerInfo.copy())
