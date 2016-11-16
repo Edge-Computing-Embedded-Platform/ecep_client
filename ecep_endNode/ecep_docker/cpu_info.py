@@ -91,10 +91,27 @@ def getCpuInfo():
     return ret
 
     
+def getCpuName():
+    """
+    Name of the CPU is fetched
+    """
+    invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.12')
+    try:
+        
+        info = invoke_clientAPI.info()
+        name = info['Name']
+    
+    except Exception as e:
+        name = None
+        
+    return name
+    
    
 if __name__ == '__main__':
-
+    """
+    For testing
+    """
     print ('The machine is: ', getMachineArchitecture())
     print('The location of the device is: ', getDeviceLocation())
     print(getCpuInfo())
-        
+    print(getCpuName())

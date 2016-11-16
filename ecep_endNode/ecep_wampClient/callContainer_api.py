@@ -66,7 +66,7 @@ def callContainer(data):
         cmd['local_path'] = fetcher.get_file(**kwargs)
         
         execFile = addFile_toContainer.addFile()
-        response['success'] = execFile.copyFileTo_container(cmd)
+        response['success'] = execFile.copyFileTo_container(**cmd)
         
         if response['success']:
             response['status'] = 'file uploaded and started'

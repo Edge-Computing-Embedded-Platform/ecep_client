@@ -5,7 +5,6 @@ Praveen Prabhakaran, Tejeshwar Chandra Kamaal
 """
 
 import wamp_client
-
 import callContainer_api
 import deviceRegister
 import fetcher
