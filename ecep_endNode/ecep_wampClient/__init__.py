@@ -8,6 +8,6 @@ import wamp_client
 import callContainer_api
 import deviceRegister
 import fetcher
-
+client = None
 def init(path):
     fetcher.init_fetcher(path)

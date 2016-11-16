@@ -11,6 +11,7 @@ messages such as logs, etc.
 import threading
 import time
 import sys
+from uuid import getnode as get_mac
 from wamp_client import *
 import callContainer_api as cca
 import __init__
@@ -18,9 +19,10 @@ from ..ecep_docker import cpu_info
 
 ticks = 20 #seconds
 
-client = None
-    
 def init(device):
+    """
+    Initialize client side wamp
+    """
     global client
     client = wampserver(device)
 
@@ -40,6 +42,27 @@ def threaded(func):
     return func_wrapper
 
 
+def formDeviceName():
+    """
+    This forms the device name according to the
+    device MAC and name of the device
+    """
+    mac_int = get_mac()
+    mac_hex = iter(hex(mac_int)[2:].zfill(12))
+    mac_str = ":".join(i + next(mac_hex) for i in mac_hex)
+    
+    cpuName = cpu_info.getCpuName()
+    
+    if cpuName == None:
+        sys.exit("Cannot get device name!! Try running with 'sudo'!!")
+        
+    cpuName = cpuName[:10]
+    
+    deviceName = cpuName + '/' + mac_str
+    
+    return deviceName
+    
+    
 class periodicTransmit(object):
     """
     This class definitions which handle message
@@ -88,8 +111,8 @@ class periodicTransmit(object):
 if __name__ == "__main__":
          
     global client
-
-    device = 'nanna_device'
+    
+    device = formDeviceName()
     init(device)
 
     # params for wampserver

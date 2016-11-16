@@ -57,8 +57,10 @@ class ClientReader(ApplicationSession):
             sendTo("com.ecep.deviceResponse", resp)
 
         try:
+            print("###########################################################")
             yield self.subscribe(contcmd, self.topic)
             print ("Subscribed to topic: " + self.topic)
+            print("###########################################################")
         except Exception as e:
             print("could not subscribe to topic:" + self.topic + " : " + e)
 
@@ -122,7 +124,9 @@ def sendTo(topic, data):
     print ("publishing to :" + topic + " and sending data: ")
     print (data)
     global requestReceived
-    requestReceived.publish(topic, data)
+
+    if requestReceived is not None:
+        requestReceived.publish(topic, data)
 
 
 if __name__ == '__main__':

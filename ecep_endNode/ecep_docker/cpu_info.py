@@ -28,15 +28,24 @@ def getDeviceLocation():
     """
     queries the device location
     """
+    location = "unknown"
     send_url = 'http://freegeoip.net/json'
-    r = requests.get(send_url)
-    j = json.loads(r.text)
-    lat = j['latitude']
-    lon = j['longitude']
-    city = j['city']
-    state = j['region_name']
+
+    for i in range(5):
+        try:
+            r = requests.get(send_url,)
+
+            j = json.loads(r.text)
+            lat = j['latitude']
+            lon = j['longitude']
+            city = j['city']
+            state = j['region_name']
+            location = city + ', ' + state
+        except Exception,e:
+            continue
+
     
-    location = city + ', ' + state
+
     return location
     
     
