@@ -5,6 +5,7 @@
 ip="ec2-52-39-130-106.us-west-2.compute.amazonaws.com"
 port="8096"
 realm="realm1"
-path="/home/chinmayi/"
+path=$HOME/ecep_files/
+
 # Do not edit the below line
 python -m ecep_endNode.ecep_wampClient.deviceRegister $ip $port $realm $path

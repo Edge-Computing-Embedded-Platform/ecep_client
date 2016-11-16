@@ -96,9 +96,11 @@ if __name__ == "__main__":
     ip = sys.argv[1]
     port = sys.argv[2]
     realm = unicode(sys.argv[3])
+    path = sys.argv[4]
 
-    __init__.init(sys.argv[4])
-    print(ip, port, realm)
+    __init__.init(path)
+    print(ip, port, realm, path)
+
     check = client.connect(ip, port, realm)
     
     
