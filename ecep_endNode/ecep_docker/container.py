@@ -9,6 +9,8 @@ import requests
 from requests.exceptions import HTTPError
 import json
 
+version = "auto"  
+
 def create_containers(args):
 	"""
 	- API to create containers.
@@ -35,7 +37,7 @@ def create_containers(args):
 	if 'network_disabled' in args:
 		args['network_disabled'] = bool(args['network_disabled'])
 	
-	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.12')		
+	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version= version)		
 	
 	try:
 		containerID = invoke_clientAPI.create_container(**args)
@@ -89,7 +91,7 @@ def list_containers(args):
 	print ("In list func")
 	if 'all' in args:
 		args['all'] = bool(args['all'])
-	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.12')
+	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.18')
 	container_list = invoke_clientAPI.containers(**args)
 	return container_list
 
@@ -103,7 +105,7 @@ def run_container(args):
 		Format: {'container':'container_name'}
 		Returns 'Success' if container starts successfully if not 'Failed'
 	"""
-	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.12')
+	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.18')
 	container_ID = {}
 	container_ID = {'container' : args['container']}
 	status = {}
@@ -134,7 +136,7 @@ def delete_container(args):
 	if 'force' in args:
 		args['force'] = bool(args['force'])
 
-	invoke_clientAPI =  Client(base_url='unix://var/run/docker.sock',version='1.12')
+	invoke_clientAPI =  Client(base_url='unix://var/run/docker.sock',version='1.18')
 	status = {}
 	try:
 		container_removed = invoke_clientAPI.remove_container(**args)
@@ -162,7 +164,7 @@ def delete_image(args):
 	if 'noprune' in args:
 		args['noprune'] = bool(args['noprune'])
 
-	invoke_clientAPI =  Client(base_url='unix://var/run/docker.sock',version='1.12')
+	invoke_clientAPI =  Client(base_url='unix://var/run/docker.sock',version='1.18')
 	status = {}
 	try:
 		image_removed = invoke_clientAPI.remove_image(**args)
@@ -186,7 +188,7 @@ def stop_container(args):
 	if 'timeout' in args:
 		args['timeout'] = bool(args['stop'])
 	
-	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.12')
+	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock',version='1.18')
 	status = {}
 	try:
 		halt_container = invoke_clientAPI.stop(**args)

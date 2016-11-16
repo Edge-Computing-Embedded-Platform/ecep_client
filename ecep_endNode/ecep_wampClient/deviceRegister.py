@@ -84,7 +84,7 @@ class periodicTransmit(object):
         while True:
             self._topic = "com.ecep.heartbeat"
             self._heartbeatData['deviceId'] = self._deviceId
-            self._heartbeatData['location'] = cpu_info.getDeviceLocation()
+            self._heartbeatData['location'] = 'boro boro' #cpu_info.getDeviceLocation()
             self._heartbeatData['arch'] = cpu_info.getMachineArchitecture()
             sendTo(self._topic, self._heartbeatData)
             time.sleep(ticks)

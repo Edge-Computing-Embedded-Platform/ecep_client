@@ -17,6 +17,7 @@ invoke_cli = Client(base_url='unix://var/run/docker.sock')
 
 class addFile:
 	def startContainer_toAddFile(self, **kwargs):
+		print ('startConatiner')
 		containerID = kwargs['container_name']
 	        status = {}
 		
@@ -30,6 +31,8 @@ class addFile:
 			
 
 	def copyFileTo_container(self, **kwargs):
+		print ('copyFile routine')
+		global filetype, containerID, user
 		containerID = kwargs['container_name']	
 		path = kwargs['containerpath']
 		data = kwargs['file']
@@ -41,6 +44,7 @@ class addFile:
 			print err.errno == errno.EPERM
 			
 		filetype =  os.path.basename(localpath)
+		print ('filetype: ',filetype)
 		pw_tarstream = BytesIO()
 		pw_tar = tarfile.TarFile(fileobj=pw_tarstream, mode='w') #class for reading and writing tar archives. 
 		file_data = get_fileObj
@@ -51,21 +55,33 @@ class addFile:
 		pw_tar.close()
 		pw_tarstream.seek(0)
 		
-        	response = invoke_cli.put_archive(containerID,path,pw_tarstream)
-        	return response
+        	_putArchive_response = invoke_cli.put_archive(containerID,path,pw_tarstream)
+        	print ('_putArchive_response: ',_putArchive_response)
         	
-        def run_shellScript(self, **kwargs):		
+        	if _putArchive_response: 
+        		_script = {'container_name': containerID, 'user':'root'}
+        		print ('container_name: ',containerID) 
+        		self.run_shellScript(**_script)
+        		
+        	return _putArchive_response
+        	
+        def run_shellScript(self, **kwargs):	
+        	print('run_shell routine')	
 		containerID = kwargs['container_name']	
+		#print ('con_name: ',containerID)
 		#stdout = kwargs['stdout']
-		#user = kwargs['user']
+		user = kwargs['user']
 		exe_file = filetype
-		cmmd = ['sh','/exe_file']
-		print containerID,user
+		print ('executableFile: ',exe_file)
+		_file_location = os.path.join("/",exe_file)
+		print _file_location
+		cmmd = ['sh',_file_location]
+		print ('containerID_shellroutine: ,user: ',containerID,user)
 		response = invoke_cli.exec_create(container=containerID,cmd=cmmd,user='root')
-		print response1
-		ID = response1
-		response = invoke_cli.exec_start(exec_id = ID)
-		print response 
+		print ('response: ',response)
+		ID = response
+		response1 = invoke_cli.exec_start(exec_id = ID)
+		print ('response1: ',response1) 
 		
 
 if __name__ == "__main__":
@@ -76,7 +92,7 @@ if __name__ == "__main__":
 	data = {'container_name':'nostalgic_bhabha','containerpath':'/','local_path':'/home/parallels/hello.sh','file':'temp.tar'}
 	obj.copyFileTo_container(**data)
 	#time.sleep(5)
-	script = {'container_name':'nostalgic_bhabha','user':'root'}
-	obj.run_shellScript(**script)
+	#script = {'container_name':'nostalgic_bhabha','user':'root'}
+	#obj.run_shellScript(**script)
         	
         	
