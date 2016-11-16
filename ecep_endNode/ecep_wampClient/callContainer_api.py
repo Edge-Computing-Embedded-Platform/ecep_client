@@ -8,19 +8,21 @@ container API.
 """
 
 from ..ecep_docker import container, addFile_toContainer
-from fetcher import *
+import fetcher
 from wamp_client import *
+
+
 # Call appropriate functions according to the commands received from user
 def callContainer(data):
     """
     Calls the particular container API.
     """
-    
-    #print (data)
+
+    # print (data)
 
     # Form the response packet to be sent back to server
     response = data
-    
+
     # restructure the received commands according to the API calls
     cmd = {}
 
@@ -29,18 +31,17 @@ def callContainer(data):
         cmd['name'] = data['containerName']
         cmd['image'] = data['imageName']
         response['ID'] = container.create_containers(cmd)
-        
+
         if response['ID'] == None:
             response['status'] = 'create failed'
         else:
             response['status'] = 'created'
-        
 
     # To remove a container
     if data['command'] == 'remove':
         cmd['container'] = data['containerName']
         response['success'] = container.delete_container(cmd)
-        
+
         if response['success']:
             response['status'] = 'removed'
         else:
@@ -50,57 +51,54 @@ def callContainer(data):
     if data['command'] == 'start':
         cmd['container'] = data['containerName']
         response['success'] = container.run_container(cmd)
-        
+
         if response['success']:
             response['status'] = 'started'
         else:
             response['status'] = 'start failed'
-            
+
     # to upload a file and start
     if data['command'] == 'upStart':
         cmd['container'] = data['containerName']
         response['success'] = container.run_container(cmd)
-        
-        kwargs = {'username' : data['containerName'].split('_')[0], 'containerName' :
-            data['containerName'].split('_')[1], 'filename' : data['filename']}
+
+        kwargs = {'username': data['containerName'].split('_')[0], 'containerName':
+            data['containerName'].split('_')[1], 'filename': data['filename']}
         cmd['local_path'] = fetcher.get_file(**kwargs)
-        
+
         execFile = addFile_toContainer.addFile()
         response['success'] = execFile.copyFileTo_container(**cmd)
-        
+
         if response['success']:
             response['status'] = 'file uploaded and started'
         else:
             response['status'] = 'file upload and start failed'
-        
 
     # To stop a container
     if data['command'] == 'stop':
         cmd['container'] = data['containerName']
         response['success'] = container.stop_container(cmd)
-        
+
         if response['success']:
             response['status'] = 'stopped'
         else:
             response['status'] = 'stop failed'
-            
+
     return response
-    
-    
+
+
 def getContainerList():
     """
     Gets a list of containers running / created / stopped.
     """
     contList = []
     containerInfo = {}
-    args = {'all':'all'}
+    args = {'all': 'all'}
     contListRaw = container.list_containers(args)
-    
+    print contListRaw
     for entries in contListRaw:
         containerInfo['status'] = entries['Status']
         containerInfo['containerName'] = entries['Names']
-        
         contList.append(containerInfo.copy())
-        
+
     return contList
-        

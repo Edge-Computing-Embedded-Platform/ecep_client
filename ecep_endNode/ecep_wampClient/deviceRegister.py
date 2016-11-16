@@ -11,10 +11,9 @@ messages such as logs, etc.
 import threading
 import time
 import sys
-from uuid import getnode as get_mac
-
 from wamp_client import *
 import callContainer_api as cca
+import __init__
 from ..ecep_docker import cpu_info
 
 ticks = 20 #seconds
@@ -22,9 +21,6 @@ ticks = 20 #seconds
 client = None
     
 def init(device):
-    """
-    Initialize client side wamp
-    """
     global client
     client = wampserver(device)
 
@@ -44,27 +40,6 @@ def threaded(func):
     return func_wrapper
 
 
-def formDeviceName():
-    """
-    This forms the device name according to the
-    device MAC and name of the device
-    """
-    mac_int = get_mac()
-    mac_hex = iter(hex(mac_int)[2:].zfill(12))
-    mac_str = ":".join(i + next(mac_hex) for i in mac_hex)
-    
-    cpuName = cpu_info.getCpuName()
-    
-    if cpuName == None:
-        sys.exit("Cannot get device name!! Try running with 'sudo'!!")
-        
-    cpuName = cpuName[:10]
-    
-    deviceName = cpuName + '/' + mac_str
-    
-    return deviceName
-    
-    
 class periodicTransmit(object):
     """
     This class definitions which handle message
@@ -84,7 +59,7 @@ class periodicTransmit(object):
         while True:
             self._topic = "com.ecep.heartbeat"
             self._heartbeatData['deviceId'] = self._deviceId
-            self._heartbeatData['location'] = 'boro boro' #cpu_info.getDeviceLocation()
+            self._heartbeatData['location'] = cpu_info.getDeviceLocation()
             self._heartbeatData['arch'] = cpu_info.getMachineArchitecture()
             sendTo(self._topic, self._heartbeatData)
             time.sleep(ticks)
@@ -109,19 +84,20 @@ class periodicTransmit(object):
             sendTo(self._topic, self._cpuInfo)
             time.sleep(ticks*50) # 1000 seconds
             
-            
+
 if __name__ == "__main__":
          
     global client
-    
-    device = formDeviceName()
+
+    device = 'nanna_device'
     init(device)
-    
+
     # params for wampserver
     ip = sys.argv[1]
     port = sys.argv[2]
     realm = unicode(sys.argv[3])
-    
+
+    __init__.init(sys.argv[4])
     print(ip, port, realm)
     check = client.connect(ip, port, realm)
     
