@@ -2,6 +2,7 @@
 Edge Computing Embedded Platform
 Developed by Abhishek Gurudutt, Chinmayi Divakara
 Praveen Prabhakaran, Tejeshwar Chandra Kamaal
+
 This is to interface between Wamp client and
 container API. 
 """
@@ -120,15 +121,16 @@ class addFile:
 				print ('_fileLocation_inContainer: ',_fileLocation_inContainer)
 				
 				_executeScript = {'container_name':self._containerName,\
-						  'user':self._user,\
-						  '_execFile':_execFile,\
+						  'user':self._user,		       \
+						  '_execFile':_execFile,               \
 						  '_filePath_inContainer':_fileLocation_inContainer
 						  }	
+						  
 				print ('containerName: ,containerPath: ,localPath: execFile: ,filePath_inContainer: ',
 				self._containerName,\
 				self._containerPath,\
-				self._localPath,\
-				_execFile,\
+				self._localPath,    \
+				_execFile,          \
 				_fileLocation_inContainer)					  
 
 				self.run_shellScript(**_executeScript)
@@ -139,8 +141,8 @@ class addFile:
 				print ('_fileLocation_inContainer: ',_fileLocation_inContainer)
 				
 				_executeScript = {'container_name':self._containerName,\
-						  'user':self._user,\
-						  '_execFile':_execFile,\
+						  'user':self._user,                   \
+						  '_execFile':_execFile,               \
 						  '_filePath_inContainer':_fileLocation_inContainer
 						  }
 				self.run_shellScript(**_executeScript)
@@ -161,13 +163,33 @@ class addFile:
 		print ('containerID_shellroutine: ,user: ',self._containerName,self._user)
 		
 		_execCreate_response = invoke_cli.exec_create( container = self._containerName,\
-							       cmd = self._command,\
+							       cmd = self._command,            \
 							       user = self._user)				       
 		print ('_execCreate_response: ',_execCreate_response)
 		
 		_execStart_response = invoke_cli.exec_start(exec_id = _execCreate_response)					    
 		print ('_execStart_response: ',_execStart_response) 
-
+		
+	def fetch_result(self,**kwargs):
+		"""
+		Fetch a file from a container.
+		"""
+		self._containerName = kwargs['container_name']
+		self._retrievePath = kwargs['path_to_retrieveFile'] 
+		
+		(_fetchResult_rawData,_fetchResult_stat) = invoke_cli.get_archive(self._containerName,self._retrievePath)
+		print ('stat: ',_fetchResult_stat)
+		
+	def fetch_logs(self,**kwargs):
+		"""
+		Fetch logs of a container
+		"""
+		self._containerName = kwargs['container_name']
+		
+		_logs = invoke_cli.logs(self._containerName, stream = True)
+		for line in _logs:
+   			print(line)
+		
 		
 if __name__ == "__main__":
 	
@@ -182,4 +204,10 @@ if __name__ == "__main__":
 	'containerpath':'/home/',\
 	'local_path':'/home/parallels/Downloads/for_testing.tar'}
 	obj.copyFileTo_container(**data)
+	
+	#result = {'container_name':'nostalgic_bhabha','path_to_retrieveFile':'/home'}
+	#obj.fetch_result(**result)
+	
+	#log = {'container_name':'nostalgic_bhabha'}
+	#obj.fetch_logs(**log)
 	
