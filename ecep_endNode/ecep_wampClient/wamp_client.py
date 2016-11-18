@@ -122,7 +122,8 @@ class wampserver(ApplicationSession):
 # Function used to publish the data 
 def sendTo(topic, data):
     print ("publishing to :" + topic + " and sending data: ")
-    print (data)
+    if topic != 'com.ecep.cpuInfo':
+    	print (data)
     global requestReceived
 
     if requestReceived is not None:
