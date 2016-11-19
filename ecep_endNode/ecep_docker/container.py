@@ -23,8 +23,9 @@ def create_containers(args):
     """
 
     print ("In create container")
-    if 'detach' in args:
-        args['detach'] = bool(args['detach'])
+    args['detach'] = ('True')
+    #if 'detach' in args:
+     #   args['detach'] = bool(args['detach'])
     if 'stdin_open' in args:
         args['stdin_open'] = bool(args['stdin_open'])
     if 'name' in args:
@@ -40,19 +41,25 @@ def create_containers(args):
 
     try:
         containerID = invoke_clientAPI.create_container(**args)
+        print ('container ID: ', containerID)
         print ('IN FIRST TRY CALL')
+        print ('Created container in 1st try') 
     except Exception as e:
         print ('IN FIRST Exception')
         print e
-
         try:
             for line in invoke_clientAPI.pull(args['image'], stream=True):
                 print(json.dumps(json.loads(line), indent=4))
             # invoke_clientAPI.pull(args['image'],stream=True)
 
             containerID = invoke_clientAPI.create_container(**args)
+            print ('Created container, but had to pull the image')
         except HTTPError:
             containerID = None
+            
+    print ('Will start the container now')
+    start_container = invoke_clientAPI.start(container=containerID.get('Id'))
+    
     """
         for line in invoke_clientAPI.pull(args['image'], stream=True):
                  print(json.dumps(json.loads(line), indent=4))
