@@ -92,7 +92,8 @@ class periodicTransmit(object):
     def containerStatus(self):
         while True:
             self._topic = "com.ecep.containerStatus"
-            self._containerData = cca.getContainerList()
+            self._containerData['deviceId'] = self._deviceId
+            self._containerData['info'] = cca.getContainerList()
             sendTo(self._topic, self._containerData)
             time.sleep(ticks*5) #  100 seconds
             
