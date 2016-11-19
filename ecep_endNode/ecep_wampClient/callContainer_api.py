@@ -33,9 +33,9 @@ def callContainer(data):
         response['ID'] = container.create_containers(cmd)
 
         if response['ID'] == None:
-            response['status'] = 'create failed'
+            response['status'] = 'Create failed'
         else:
-            response['status'] = 'created'
+            response['status'] = 'Created'
 
     # To remove a container
     if data['command'] == 'remove':
@@ -43,9 +43,9 @@ def callContainer(data):
         response['success'] = container.delete_container(cmd)
 
         if response['success']:
-            response['status'] = 'removed'
+            response['status'] = 'Removed'
         else:
-            response['status'] = 'remove failed'
+            response['status'] = 'Remove failed'
 
     # To start a container
     if data['command'] == 'start':
@@ -53,9 +53,9 @@ def callContainer(data):
         response['success'] = container.run_container(cmd)
 
         if response['success']:
-            response['status'] = 'started'
+            response['status'] = 'Started'
         else:
-            response['status'] = 'start failed'
+            response['status'] = 'Start failed'
 
     # to upload a file and start
     if data['command'] == 'upStart':
@@ -70,9 +70,9 @@ def callContainer(data):
         response['success'] = execFile.copyFileTo_container(**cmd)
 
         if response['success']:
-            response['status'] = 'file uploaded and started'
+            response['status'] = 'File uploaded and started'
         else:
-            response['status'] = 'file upload and start failed'
+            response['status'] = 'File upload and start failed'
 
     # To stop a container
     if data['command'] == 'stop':
@@ -80,9 +80,9 @@ def callContainer(data):
         response['success'] = container.stop_container(cmd)
 
         if response['success']:
-            response['status'] = 'stopped'
+            response['status'] = 'Stopped'
         else:
-            response['status'] = 'stop failed'
+            response['status'] = 'Stop failed'
 
     return response
 
