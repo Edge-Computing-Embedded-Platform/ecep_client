@@ -10,8 +10,11 @@ from docker import Client
 from io import BytesIO
 import json
 import os
+import sys
+import signal
 import tarfile
 import time
+import StringIO
 
 invoke_cli = Client(base_url='unix://var/run/docker.sock')
 
@@ -103,7 +106,7 @@ class addFile:
         print ('folderName: extension: ', self._folderName, self._extension)
 
         _transferApp = {'container_name': self._containerName, \
-                        'containerpath': self._containerPath, \
+                        'containerpath': self._containerPath,  \
                         'local_path': self._localPath}
 
         _successful = self.transferFile(**_transferApp)
@@ -114,7 +117,7 @@ class addFile:
             print self._localPath
 
             _transferScript = {'container_name': self._containerName, \
-                               'containerpath': self._containerPath, \
+                               'containerpath': self._containerPath,  \
                                'local_path': self._localPath}
 
             _checkStatus = self.transferFile(**_transferScript)
@@ -126,16 +129,16 @@ class addFile:
                 print ('_fileLocation_inContainer: ', _fileLocation_inContainer)
 
                 _executeScript = {'container_name': self._containerName, \
-                                  'user': self._user, \
-                                  '_execFile': _execFile, \
+                                  'user': self._user,                    \
+                                  '_execFile': _execFile,                \
                                   '_filePath_inContainer': _fileLocation_inContainer
                                   }
 
                 print ('containerName: ,containerPath: ,localPath: execFile: ,filePath_inContainer: ',
                        self._containerName, \
                        self._containerPath, \
-                       self._localPath, \
-                       _execFile, \
+                       self._localPath,     \
+                       _execFile,           \
                        _fileLocation_inContainer)
 
                 self.run_shellScript(**_executeScript)
@@ -146,13 +149,14 @@ class addFile:
                 print ('_fileLocation_inContainer: ', _fileLocation_inContainer)
 
                 _executeScript = {'container_name': self._containerName, \
-                                  'user': self._user, \
-                                  '_execFile': _execFile, \
+                                  'user': self._user,                    \
+                                  '_execFile': _execFile,                \
                                   '_filePath_inContainer': _fileLocation_inContainer
                                   }
                 self.run_shellScript(**_executeScript)
 
         return _checkStatus
+        #os.kill(0, signal.SIGKILL)
 
     def run_shellScript(self, **kwargs):
         """
@@ -168,7 +172,7 @@ class addFile:
         print ('containerID_shellroutine: ,user: ', self._containerName, self._user)
 
         _execCreate_response = invoke_cli.exec_create(container=self._containerName, \
-                                                      cmd=self._command, \
+                                                      cmd=self._command,             \
                                                       user=self._user)
         print ('_execCreate_response: ', _execCreate_response)
 
@@ -194,21 +198,53 @@ class addFile:
         _logs = invoke_cli.logs(self._containerName, stream=True)
         for line in _logs:
             print(line)
-
+            
+    def fetch_results_using_cp(self,**kwargs):
+    	self.containerName = kwargs['container_name']
+    	self.resource = kwargs['container_path']
+    	
+    	print ('container_name:  , container_path:', self.containerName,self.resource)
+    	
+    	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock', version='1.12')
+    	try:
+    		print ('try')
+    		_fileObtained = invoke_clientAPI.copy(self.containerName,self.resource)
+    		filelike = StringIO.StringIO(_fileObtaine.read())
+		tar = tarfile.open(fileobj = filelike)
+		file = tar.extractfile(os.path.basename(self.resource ))
+		print file.read()
+		print ('response: ',_fileObtained)
+	except HTTPError:
+		print ('exception')
 
 if __name__ == "__main__":
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    print dir_path
+	dir_path = os.path.dirname(os.path.realpath(__file__))
+	print dir_path
 
-    obj = addFile()
-    #name = {'container': 'desperate_goldwasser'}
-    #obj.startContainer_toAddFile(**name)
+	#ppid = os.getpid()
+	#pid = os.fork()
+	#if pid == 0:
+    	obj = addFile()
+    	
+        #data = {'container': 'nostalgic_bhabha', \
+        #	'containerpath': '/home/',       \
+        #	'local_path': '/home/parallels/Downloads/for_testing.tar'}
+	#obj.copyFileTo_container(**data)
+	
+	copyData = {'container_name':'nostalgic_bhabha', \
+		    'container_path':'/home/for_testing/requirement.sh'}
+		    
+	obj.fetch_results_using_cp(**copyData)
+	
+	"""
+	if os.getpid() == ppid :
+		print ("parent")
+		print ("child PID: ",pid)
+		print ("parent PPID: ",ppid)
+		while True:
+			time.sleep(5)
 
-    data = {'container': 'desperate_goldwasser', \
-            'containerpath': '/home/', \
-            'local_path': '/home/parallels/Downloads/for_testing.tar'}
-    obj.copyFileTo_container(**data)
-
+	"""
 # result = {'container_name':'nostalgic_bhabha','path_to_retrieveFile':'/home'}
 # obj.fetch_result(**result)
 

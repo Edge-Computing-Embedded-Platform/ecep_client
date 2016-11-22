@@ -23,9 +23,9 @@ def create_containers(args):
     """
 
     print ("In create container")
-    args['detach'] = ('True')
-    #if 'detach' in args:
-     #   args['detach'] = bool(args['detach'])
+    #args['detach'] = ('True')
+    if 'detach' in args:
+        args['detach'] = bool(args['detach'])
     if 'stdin_open' in args:
         args['stdin_open'] = bool(args['stdin_open'])
     if 'name' in args:
@@ -36,6 +36,8 @@ def create_containers(args):
         args['tty'] = bool(args['tty'])
     if 'network_disabled' in args:
         args['network_disabled'] = bool(args['network_disabled'])
+        
+    #print ('detach: ',args['detach'])
 
     invoke_clientAPI = Client(base_url='unix://var/run/docker.sock', version='1.12')
 
@@ -44,6 +46,8 @@ def create_containers(args):
         print ('container ID: ', containerID)
         print ('IN FIRST TRY CALL')
         print ('Created container in 1st try') 
+        print ('Will start the container now')
+    	start_container = invoke_clientAPI.start(container=containerID.get('Id'))
     except Exception as e:
         print ('IN FIRST Exception')
         print e
@@ -56,9 +60,6 @@ def create_containers(args):
             print ('Created container, but had to pull the image')
         except HTTPError:
             containerID = None
-            
-    print ('Will start the container now')
-    start_container = invoke_clientAPI.start(container=containerID.get('Id'))
     
     """
         for line in invoke_clientAPI.pull(args['image'], stream=True):
@@ -118,10 +119,10 @@ def run_container(args):
     try:
         start_container = invoke_clientAPI.start(**container_ID)
         status["status"] = "True"
-        return json.dumps(status)
     except:
         status["status"] = "False"
-        return json.dumps(status)
+        
+    return json.dumps(status)
 
 
 def delete_container(args):
@@ -147,12 +148,11 @@ def delete_container(args):
     try:
         container_removed = invoke_clientAPI.remove_container(**args)
         status["status"] = "True"
-        return json.dumps(status)
     except:
         status["status"] = "False"
-        return json.dumps(status)
-    return container_removed
-
+        
+    return json.dumps(status)
+    
 
 def delete_image(args):
     """
@@ -175,10 +175,10 @@ def delete_image(args):
     try:
         image_removed = invoke_clientAPI.remove_image(**args)
         status["status"] = "True"
-        return json.dumps(status)
     except:
         status["status"] = "False"
-        return json.dumps(status)
+        
+    return json.dumps(status)
 
 
 def stop_container(args):
@@ -200,10 +200,10 @@ def stop_container(args):
     try:
         halt_container = invoke_clientAPI.stop(**args)
         status["status"] = "True"
-        return json.dumps(status)
     except:
         status["status"] = "False"
-        return json.dumps(status)
+    
+    return json.dumps(status)
 
 
 def rename_container(args):
@@ -225,10 +225,10 @@ def rename_container(args):
     try:
         newname_container = invoke_clientAPI.rename(**args)
         status["status"] = "True"
-        return json.dumps(status)
     except:
         status["status"] = "False"
-        return json.dumps(status)
+        
+    return json.dumps(status)
 
 ####Testing purposes##################
 # cli = Client(base_url='unix://var/run/docker.sock',version='1.12')

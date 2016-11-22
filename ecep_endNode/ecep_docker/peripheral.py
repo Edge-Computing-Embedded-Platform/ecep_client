@@ -2,7 +2,6 @@
 Edge Computing Embedded Platform
 Developed by Abhishek Gurudutt, Chinmayi Divakara
 Praveen Prabhakaran, Tejeshwar Chandra Kamaal
-
 This is to interface between container and
 host device access. 
 """
@@ -17,7 +16,6 @@ class peripherelAcess:
         """
         - API creates container and also provides peripherel access.
         - API is equivalent to create container with host configurations added to it.
-
         - Response
         """
         host_config = {}
