@@ -75,7 +75,7 @@ def callContainer(data):
         threadId.start()
         
         global threads
-        threads['containerName'] = threadId
+        threads[data['containerName']] = threadId
 
         response['status'] = 'File uploaded and starting'
         
@@ -84,7 +84,7 @@ def callContainer(data):
     if data['command'] == 'stop':
         cmd['container'] = data['containerName']
 
-        global threads
+        #global threads
         
         
         response['success'] = container.stop_container(cmd)
@@ -106,7 +106,8 @@ def getContainerList():
     args = {'all': 'all'}
     contListRaw = container.list_containers(args)
     
-    print threads
+    global threads
+    print 'threads: ', threads
     
     #print contListRaw
     for entries in contListRaw:

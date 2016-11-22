@@ -95,7 +95,7 @@ def list_containers(args):
      u'Ports': []}]
 
     """
-    print ("In list func")
+
     if 'all' in args:
         args['all'] = bool(args['all'])
     invoke_clientAPI = Client(base_url='unix://var/run/docker.sock', version='1.12')

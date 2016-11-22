@@ -95,7 +95,7 @@ class periodicTransmit(object):
             self._containerData['deviceId'] = self._deviceId
             self._containerData['info'] = cca.getContainerList()
             sendTo(self._topic, self._containerData)
-            time.sleep(ticks*5) #  100 seconds
+            time.sleep(101) #  101 seconds
             
             
     #Send CPU information
@@ -106,8 +106,8 @@ class periodicTransmit(object):
             self._cpuInfo['deviceId'] = self._deviceId
             self._cpuInfo['info'] = cpu_info.getCpuInfo()
             sendTo(self._topic, self._cpuInfo)
-            time.sleep(ticks*5) # 100 seconds
-            
+            time.sleep(99) # 99 seconds
+
 
 if __name__ == "__main__":
          

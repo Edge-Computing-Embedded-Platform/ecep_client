@@ -7,5 +7,7 @@ port="8096"
 realm="realm1"
 path=$HOME/ecep_files/
 
+cat .banner/display
+
 # Do not edit the below line
 python -m ecep_endNode.ecep_wampClient.deviceRegister $ip $port $realm $path

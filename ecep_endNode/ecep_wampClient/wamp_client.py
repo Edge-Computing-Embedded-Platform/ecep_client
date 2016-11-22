@@ -123,11 +123,13 @@ class wampserver(ApplicationSession):
 def sendTo(topic, data):
     print ("publishing to :" + topic + " and sending data: ")
     if topic != 'com.ecep.cpuInfo':
-    	print (data)
+        print (data)
     global requestReceived
 
-    if requestReceived is not None:
+    try:
         requestReceived.publish(topic, data)
+    except Exception as e:
+        print ("Cannot Publish!! Make sure the correct python file is run!! Error: ", e)
 
 
 if __name__ == '__main__':
