@@ -18,6 +18,8 @@ import __init__
 from ..ecep_docker import cpu_info
 
 ticks = 20 #seconds
+client = None
+threadLock = threading.RLock()
 
 def init(device):
     """
@@ -84,7 +86,13 @@ class periodicTransmit(object):
             self._heartbeatData['deviceId'] = self._deviceId
             self._heartbeatData['location'] = cpu_info.getDeviceLocation()
             self._heartbeatData['arch'] = cpu_info.getMachineArchitecture()
-            sendTo(self._topic, self._heartbeatData)
+
+            global threadLock
+            threadLock.acquire()
+            try:
+                sendTo(self._topic, self._heartbeatData)
+            finally:
+                threadLock.release()
             time.sleep(ticks)
             
     #Send container status
@@ -94,8 +102,14 @@ class periodicTransmit(object):
             self._topic = "com.ecep.containerStatus"
             self._containerData['deviceId'] = self._deviceId
             self._containerData['info'] = cca.getContainerList()
-            sendTo(self._topic, self._containerData)
-            time.sleep(101) #  101 seconds
+
+            global threadLock
+            threadLock.acquire()
+            try:
+                sendTo(self._topic, self._containerData)
+            finally:
+                threadLock.release()
+            time.sleep(ticks*5) #  100 seconds
             
             
     #Send CPU information
@@ -105,14 +119,18 @@ class periodicTransmit(object):
             self._topic = "com.ecep.cpuInfo"
             self._cpuInfo['deviceId'] = self._deviceId
             self._cpuInfo['info'] = cpu_info.getCpuInfo()
-            sendTo(self._topic, self._cpuInfo)
-            time.sleep(99) # 99 seconds
+
+            global threadLock
+            threadLock.acquire()
+            try:
+                sendTo(self._topic, self._cpuInfo)
+            finally:
+                threadLock.release()
+            time.sleep(ticks*5) # 100 seconds
 
 
 if __name__ == "__main__":
          
-    global client
-    
     device = formDeviceName()
     init(device)
 
@@ -125,6 +143,7 @@ if __name__ == "__main__":
     __init__.init(path)
     print(ip, port, realm, path)
 
+    global client
     check = client.connect(ip, port, realm)
     
     
