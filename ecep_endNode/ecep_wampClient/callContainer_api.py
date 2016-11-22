@@ -6,11 +6,12 @@ Praveen Prabhakaran, Tejeshwar Chandra Kamaal
 This is to interface between Wamp client and
 container API. 
 """
+import threading
 
 from ..ecep_docker import container, addFile_toContainer
 import fetcher
-from wamp_client import *
 
+threads = {}
 
 # Call appropriate functions according to the commands received from user
 def callContainer(data):
@@ -18,8 +19,7 @@ def callContainer(data):
     Calls the particular container API.
     """
 
-    # print (data)
-
+    global pid_application
     # Form the response packet to be sent back to server
     response = data
 
@@ -57,6 +57,7 @@ def callContainer(data):
         else:
             response['status'] = 'Start failed'
 
+
     # to upload a file and start
     if data['command'] == 'upStart':
         cmd['container'] = data['containerName']
@@ -65,18 +66,27 @@ def callContainer(data):
         kwargs = {'username': data['containerName'].split('_')[0], 'containerName':
             data['containerName'].split('_')[1], 'filename': data['filename']}
         cmd['local_path'] = fetcher.get_file(**kwargs)
-
+        
+            
         execFile = addFile_toContainer.addFile()
-        response['success'] = execFile.copyFileTo_container(**cmd)
+        
+        threadId = threading.Thread(target=execFile.copyFileTo_container, kwargs=cmd)
+        threadId.setDaemon(True)
+        threadId.start()
+        
+        global threads
+        threads['containerName'] = threadId
 
-        if response['success']:
-            response['status'] = 'File uploaded and started'
-        else:
-            response['status'] = 'File upload and start failed'
+        response['status'] = 'File uploaded and starting'
+        
 
     # To stop a container
     if data['command'] == 'stop':
         cmd['container'] = data['containerName']
+
+        global threads
+        
+        
         response['success'] = container.stop_container(cmd)
 
         if response['success']:
@@ -95,6 +105,9 @@ def getContainerList():
     containerInfo = {}
     args = {'all': 'all'}
     contListRaw = container.list_containers(args)
+    
+    print threads
+    
     #print contListRaw
     for entries in contListRaw:
         containerInfo['status'] = entries['Status']

@@ -139,8 +139,11 @@ if __name__ == "__main__":
     handle_containerStatus = periodicTransmit_I.containerStatus()
     handle_cpuInfo = periodicTransmit_I.cpuInfo()
     
-    while True:
-        time.sleep(2)
+    try:    
+        while True:
+            time.sleep(5)
+    except KeyboardInterrupt:
+        sys.exit(0)
         
     handle_heartbeat.join()
     handle_containerStatus.join()
