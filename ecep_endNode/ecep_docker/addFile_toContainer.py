@@ -8,6 +8,7 @@ container API.
 """
 from docker import Client
 from io import BytesIO
+from requests.exceptions import HTTPError
 import json
 import os
 import sys
@@ -209,10 +210,17 @@ class addFile:
     	try:
     		print ('try')
     		_fileObtained = invoke_clientAPI.copy(self.containerName,self.resource)
-    		filelike = StringIO.StringIO(_fileObtaine.read())
+    		filelike = StringIO.StringIO(_fileObtained.read())
 		tar = tarfile.open(fileobj = filelike)
-		file = tar.extractfile(os.path.basename(self.resource ))
-		print file.read()
+		file1 = tar.extractfile(os.path.basename(self.resource))
+		x = file1.read()
+		
+		filename = os.path.join(self._folderName) 
+		
+		print ('filename: ',filename)
+		with open(self._folderName, "w") as text_file:
+    			text_file.write(x)
+
 		print ('response: ',_fileObtained)
 	except HTTPError:
 		print ('exception')
@@ -226,10 +234,10 @@ if __name__ == "__main__":
 	#if pid == 0:
     	obj = addFile()
     	
-        #data = {'container': 'nostalgic_bhabha', \
-        #	'containerpath': '/home/',       \
-        #	'local_path': '/home/parallels/Downloads/for_testing.tar'}
-	#obj.copyFileTo_container(**data)
+        data = {'container': 'nostalgic_bhabha', \
+        	'containerpath': '/home/',       \
+        	'local_path': '/home/parallels/Downloads/for_testing.tar'}
+	obj.copyFileTo_container(**data)
 	
 	copyData = {'container_name':'nostalgic_bhabha', \
 		    'container_path':'/home/for_testing/requirement.sh'}

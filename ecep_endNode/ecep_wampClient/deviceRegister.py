@@ -106,7 +106,7 @@ class periodicTransmit(object):
             self._cpuInfo['deviceId'] = self._deviceId
             self._cpuInfo['info'] = cpu_info.getCpuInfo()
             sendTo(self._topic, self._cpuInfo)
-            time.sleep(ticks*50) # 1000 seconds
+            time.sleep(ticks*5) # 100 seconds
             
 
 if __name__ == "__main__":
