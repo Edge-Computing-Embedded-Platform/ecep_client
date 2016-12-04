@@ -212,7 +212,7 @@ class addFile:
     	(self._appName, self._extension) = os.path.splitext(self.resource)
         print ('folderName: extension: ', self._appName, self._extension)
         
-        self.resource = os.path.join( self._appName, self._output)
+        self.resource = os.path.join(self._containerPath, self._appName, self._output)
     	print (self.resource)
     	
     	try:
@@ -253,7 +253,7 @@ if __name__ == "__main__":
 	obj.copyFileTo_container(**data)
 	
 	copyData = {'container':'nostalgic_bhabha', \
-		    'container_path':'/home/for_testing.tar'}
+		    'container_path':'for_testing.tar'}
 		    
 	obj.fetch_results_using_cp(**copyData)
 	
