@@ -75,8 +75,9 @@ def put_file(**kwargs):
         if param not in kwargs:
             raise ValueError("Missing %s" % param)
 
-    url = 'http://' + ip + ':' + str(port) + upload_route
+    url = 'http://' + local_ip + ':' + str(port) + upload_route
     upload_kwargs = {'containerName': kwargs['containerName'].split('_')[1], 'username': kwargs['containerName'].split('_')[0]}
+    print upload_kwargs
 
     try:
         file_path = kwargs['local_path']
@@ -84,7 +85,7 @@ def put_file(**kwargs):
             input = {'file' : open(file_path, 'rb')}
         else:
             input = {'file': None}
-
+        print input
         requests.post(url, data=upload_kwargs, files=input)
 
         return kwargs['isFile']

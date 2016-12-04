@@ -94,7 +94,7 @@ def callContainer(data):
 
     # to dowload a log file
     if data['command'] == 'download':
-        fetch_kwargs = {'container': data['containerName'], 'container_path': data['container_path']}
+        fetch_kwargs = {'container': data['containerName'], 'container_path': data['filename']}
 
         execFile = addFile_toContainer.addFile()
         file = execFile.fetch_results_using_cp(**fetch_kwargs)

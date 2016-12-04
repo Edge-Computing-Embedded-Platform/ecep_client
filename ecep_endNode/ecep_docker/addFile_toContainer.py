@@ -201,44 +201,45 @@ class addFile:
         _logs = invoke_cli.logs(self._containerName, stream=True)
         for line in _logs:
             print(line)
-            
-    def fetch_results_using_cp(self,**kwargs):
-    	self.containerName = kwargs['container']
-    	self.resource = kwargs['container_path']
-    	
-    	print ('container_name:  , container_path:', self.containerName,self.resource)
-    	invoke_clientAPI = Client(base_url='unix://var/run/docker.sock', version='1.12')
-    	
-    	(self._appName, self._extension) = os.path.splitext(self.resource)
-        print ('folderName: extension: ', self._appName, self._extension)
-        
-        self.resource = os.path.join(self._containerPath, self._appName, self._output)
-    	print (self.resource)
-    	
-    	try:
-    		print ('try')
-    		_fileObtained = invoke_clientAPI.copy(self.containerName,self.resource)
-    		filelike = StringIO.StringIO(_fileObtained.read()) #Sends contains of file as string. Converting it back to a file.
-		tar = tarfile.open(fileobj = filelike)
-		file1 = tar.extractfile(os.path.basename(self.resource))
-		x = file1.read()
-		
-		filename = os.path.join(self._folderName) 
-		print ('filename: ',filename)
-		
-		with open(filename, "w") as text_file:
-    			text_file.write(x)
 
-		print ('response: ',_fileObtained)
-		
-		result_path = os.path.dirname(os.path.realpath(__file__))
-		result_path = os.path.join(result_path, self._folderName) 
-		
-		print result_path
-		return result_path
-	except HTTPError:
-		print ('exception\None')
-		return None
+    def fetch_results_using_cp(self, **kwargs):
+        self.containerName = kwargs['container']
+        self.resource = kwargs['container_path']
+
+        print('container_name:  , container_path:', self.containerName, self.resource)
+        invoke_clientAPI = Client(base_url='unix://var/run/docker.sock', version='1.12')
+
+        (self._appName, self._extension) = os.path.splitext(self.resource)
+        print('folderName: extension: ', self._appName, self._extension)
+
+        self.resource = '/home/' + os.path.join(self._appName, self._output)
+        print(self.resource)
+
+        try:
+            print('try')
+            _fileObtained = invoke_clientAPI.copy(self.containerName, self.resource)
+            filelike = StringIO.StringIO(
+                _fileObtained.read())  # Sends contains of file as string. Converting it back to a file.
+            tar = tarfile.open(fileobj=filelike)
+            file1 = tar.extractfile(os.path.basename(self.resource))
+            x = file1.read()
+
+            filename = self._appName
+            print('filename: ', filename)
+
+            with open(filename, "w") as text_file:
+                text_file.write(x)
+
+            print('response: ', _fileObtained)
+
+            result_path = os.path.dirname(os.path.realpath(__file__))
+            result_path = os.path.join(result_path, filename)
+
+            print result_path
+            return result_path
+        except HTTPError:
+            print('exception\None')
+            return None
 
 if __name__ == "__main__":
 	dir_path = os.path.dirname(os.path.realpath(__file__))
