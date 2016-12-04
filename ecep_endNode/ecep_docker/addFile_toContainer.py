@@ -233,6 +233,7 @@ class addFile:
             print('response: ', _fileObtained)
 
             result_path = os.path.dirname(os.path.realpath(__file__))
+            result_path = result_path + '/../../'
             result_path = os.path.join(result_path, filename)
 
             print result_path
